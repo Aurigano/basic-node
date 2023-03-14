@@ -1,10 +1,68 @@
+const client = require("./clientconn");
+const pool = require("./poolconn.js");
 const express = require("express");
+
 const app = express();
 
-const port = 3000;
+app.use(express.json());
 
-app.listen(port, () => {
-	console.log(`Listening at Port ${port}`);
+app.listen(3000, () => {
+	console.log("listening to 3000");
+});
+async function connectDatabase() {
+	try {
+		await client.connect();
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+async function disconnectDatabase() {
+	try {
+		await client.end();
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+// connectDatabase();
+
+// app.get("/raceyear", async (req, res) => {
+// 	try {
+// 		await client.connect();
+// 		const result = await client.query(`SELECT * FROM f1.circuits`);
+// 		client.end((err) => {
+// 			console.log("client has disconnected");
+// 			if (err) {
+// 				console.log("error during disconnection", err.stack);
+// 			}
+// 		});
+// 		res.json(result);
+// 	} catch (err) {
+// 		console.log(err);
+// 	}
+// });
+
+// Using Pool
+app.post("/raceyear", async (req, res) => {
+	try {
+		console.log(req.body);
+		const clientInsidePool = await pool.connect();
+
+		const result = await pool.query(
+			`SELECT * FROM f1.getraceofyear(${req.body.year})`
+		);
+
+		clientInsidePool.release();
+
+		res.json(result);
+	} catch (err) {
+		console.log(err);
+	}
+});
+
+app.post("/test", (req, res) => {
+	res.json({ requestBody: req.body }); // <==== req.body will be a parsed JSON object
 });
 
 app.get("/", function (req, res) {

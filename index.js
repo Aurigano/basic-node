@@ -61,6 +61,23 @@ app.post("/raceyear", async (req, res) => {
 	}
 });
 
+app.post("/raceresult", async (req, res) => {
+	try {
+		console.log(req.body);
+		const clientInsidePool = await pool.connect();
+
+		const result = await pool.query(
+			`SELECT * FROM f1.getresultofrace(${req.body.raceid})`
+		);
+
+		clientInsidePool.release();
+
+		res.json(result);
+	} catch (err) {
+		console.log(err);
+	}
+});
+
 app.post("/test", (req, res) => {
 	res.json({ requestBody: req.body }); // <==== req.body will be a parsed JSON object
 });

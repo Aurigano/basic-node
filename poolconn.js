@@ -8,7 +8,7 @@ const pool = new Pool({
 	password: dbPassword,
 	database: "f1database",
 	ssl: true,
-	max: 3,
+	max: 8,
 	connectionTimeoutMillis: 0,
 	idleTimeoutMillis: 0,
 });

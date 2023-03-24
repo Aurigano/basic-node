@@ -60,7 +60,9 @@ app.post("/raceyear", async (req, res) => {
 		console.log(req.body);
 		const clientInsidePool = await pool.connect();
 
-		const result = await pool.query(`SELECT * FROM f1.getraceofyear(2023)`);
+		const result = await pool.query(
+			`SELECT * FROM f1.getraceofyear(${req.body.year})`
+		);
 
 		clientInsidePool.release();
 		console.log(result);
@@ -77,7 +79,7 @@ app.post("/raceresult", async (req, res) => {
 		const clientInsidePool = await pool.connect();
 
 		const result = await pool.query(
-			`SELECT * FROM f1.getresultofrace('1096')`
+			`SELECT * FROM f1.getresultofrace(${req.body.raceid})`
 		);
 
 		clientInsidePool.release();

@@ -1,14 +1,25 @@
 const client = require("./clientconn");
 const pool = require("./poolconn.js");
 const express = require("express");
+const cors = require("cors");
 
 const app = express();
 
+app.use(cors());
+
 app.use(express.json());
+
+app.use((_req, res, next) => {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "*");
+
+	next();
+});
 
 app.listen(3000, () => {
 	console.log("listening to 3000");
 });
+
 async function connectDatabase() {
 	try {
 		await client.connect();
